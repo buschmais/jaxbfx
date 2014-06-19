@@ -157,9 +157,9 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
         if (applyGenerics) {
             JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(plainType);
             JClass narrowedSimplePropertyType = codeModel.ref(simplePropertyType.fullName()).narrow(plainType);
-            nFieldVar = implClass.field(JMod.PRIVATE | JMod.TRANSIENT, narrowedPropertyType, nPublicFieldName, JExpr._new(narrowedSimplePropertyType));
+            nFieldVar = implClass.field(JMod.PRIVATE | JMod.FINAL | JMod.TRANSIENT, narrowedPropertyType, nPublicFieldName, JExpr._new(narrowedSimplePropertyType));
         } else {
-            nFieldVar = implClass.field(JMod.PRIVATE | JMod.TRANSIENT, codeModel.ref(propertyType.fullName()), nPublicFieldName, JExpr._new(simplePropertyType));
+            nFieldVar = implClass.field(JMod.PRIVATE | JMod.FINAL | JMod.TRANSIENT, codeModel.ref(propertyType.fullName()), nPublicFieldName, JExpr._new(simplePropertyType));
         }
 
         //remove old getter and add a new one, interacting though the property proxy
