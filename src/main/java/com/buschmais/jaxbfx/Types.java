@@ -54,8 +54,11 @@ public abstract class Types {
     public static final String JAVAFX_SIMPLE_LONG_PROPERTY = "javafx.beans.property.SimpleLongProperty";
 
     public static final String JAVA_UTIL_LIST = "java.util.List";
+    public static final String JAVA_UTIL_ARRAYLIST = "java.util.ArrayList";
     public static final String JAVAFX_LIST_PROPERTY = "javafx.beans.property.ListProperty";
     public static final String JAVAFX_SIMPLE_LIST_PROPERTY = "javafx.beans.property.SimpleListProperty";
+    public static final String JAVAFX_FXCOLLECTIONS = "javafx.collections.FXCollections";
+    public static final String JAVAFX_OBSERVABLE_LIST = "javafx.collections.ObservableList";
 
     public static final String JAVAFX_OBJECT_PROPERTY = "javafx.beans.property.ObjectProperty";
     public static final String JAVAFX_SIMPLE_OBJECT_PROPERTY = "javafx.beans.property.SimpleObjectProperty";
