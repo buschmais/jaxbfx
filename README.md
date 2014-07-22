@@ -9,20 +9,48 @@ A JAXB2 XJC plugin to generate JavaFX properties.
 
 ###Using Maven
 
-1. Configure the JAXB-2 Maven Plugin.
+Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
 
-    <project>
-      ...
-      <plugins>
-        <plugin>
-        </plugin>
-      </plugins>
-      ...
-    </project>
+	<project>
+	  ...
+	  <build>
+		<plugins>
+			<plugin>
+			 <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaIncludes>
+                        <schemaInclude>**/*.xsd</schemaInclude>
+                    </schemaIncludes>
+                    <strict>true</strict>
+                    <verbose>true</verbose>
+                    <extension>true</extension>
+                    <removeOldOutput>true</removeOldOutput>
+                    <args>
+                        <arg>-Xgenerate-fx-properties</arg>
+                    </args>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.buschmais.jaxbfx</groupId>
+                            <artifactId>jaxbfx-plugin</artifactId>
+                            <version>1.0-SNAPSHOT</version>
+                        </plugin>
+                    </plugins>
+			</plugin>
+		</plugins>
+	  <build>
+	  ...
+	</project>
 
-2. Add jaxbfx XJC plugin.
-3. 
-3. You're done.
 
 ##License
 
