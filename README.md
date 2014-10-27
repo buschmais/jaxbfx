@@ -7,32 +7,35 @@ A JAXB2 XJC plugin to generate JavaFX properties.
 
 ##Getting Started
 
+Note: Work in progress... So in order to get it up and running you currently have to clone and build the plugin locally.
+
 ###Using Maven
 
 Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
 
 	<project>
-	  ...
-	  <build>
-		<plugins>
-			<plugin>
-			 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.6</version>
+	...
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb22-plugin</artifactId>
+                <version>0.11.0</version>
                 <executions>
                     <execution>
-                        <id>xjc</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <schemaDirectory>src/main/resources/xsd</schemaDirectory>
                     <schemaIncludes>
-                        <schemaInclude>**/*.xsd</schemaInclude>
+                        <schemaInclude>*.xsd</schemaInclude>
                     </schemaIncludes>
+                    <specVersion>2.2</specVersion>
                     <strict>true</strict>
-                    <verbose>true</verbose>
                     <extension>true</extension>
                     <removeOldOutput>true</removeOldOutput>
                     <args>
@@ -45,12 +48,27 @@ Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
                             <version>1.0-SNAPSHOT</version>
                         </plugin>
                     </plugins>
-			</plugin>
-		</plugins>
-	  <build>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 	  ...
 	</project>
 
+If you're running the plugin under Java 7 runtime, you might have to prevent comilation issues by adding the following
+dependency:
+
+    ...
+     <dependencies>
+         <dependency>
+             <groupId>com.oracle</groupId>
+             <artifactId>javafx</artifactId>
+             <version>2.2</version>
+             <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
+             <scope>system</scope>
+         </dependency>
+     </dependencies>
+     ...
 
 ##License
 
