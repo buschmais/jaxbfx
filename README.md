@@ -45,7 +45,7 @@ Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
                         <plugin>
                             <groupId>com.buschmais.jaxbfx</groupId>
                             <artifactId>jaxbfx-plugin</artifactId>
-                            <version>1.0-SNAPSHOT</version>
+                            <version>1.0.0</version>
                         </plugin>
                     </plugins>
                 </configuration>
