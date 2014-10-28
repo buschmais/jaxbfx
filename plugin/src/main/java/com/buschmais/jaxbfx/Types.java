@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
  * implied.
  * See the License for the specific language governing permissions and
- * limitations under the License
+ * limitations under the License.
  */
 package com.buschmais.jaxbfx;
 
@@ -58,7 +58,6 @@ public abstract class Types {
     public static final String JAVAFX_LIST_PROPERTY = "javafx.beans.property.ListProperty";
     public static final String JAVAFX_SIMPLE_LIST_PROPERTY = "javafx.beans.property.SimpleListProperty";
     public static final String JAVAFX_FXCOLLECTIONS = "javafx.collections.FXCollections";
-    public static final String JAVAFX_OBSERVABLE_LIST = "javafx.collections.ObservableList";
 
     public static final String JAVAFX_OBJECT_PROPERTY = "javafx.beans.property.ObjectProperty";
     public static final String JAVAFX_SIMPLE_OBJECT_PROPERTY = "javafx.beans.property.SimpleObjectProperty";
