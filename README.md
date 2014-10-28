@@ -55,7 +55,7 @@ Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
 	  ...
 	</project>
 
-If you're running the plugin under Java 7 runtime, you might have to prevent comilation issues by adding the following
+If you're running the plugin with Java 7, you might have to prevent compilation issues by adding the following
 dependency:
 
     ...
