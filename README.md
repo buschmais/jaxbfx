@@ -7,8 +7,6 @@ A JAXB2 XJC plugin to generate JavaFX properties.
 
 ##Getting Started
 
-Note: Work in progress... So in order to get it up and running you currently have to clone and build the plugin locally.
-
 ###Using Maven
 
 Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
