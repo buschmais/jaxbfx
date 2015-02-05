@@ -158,10 +158,34 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
         if (applyGenerics) {
             JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(plainType);
             JClass narrowedSimplePropertyType = codeModel.ref(simplePropertyType.fullName()).narrow(plainType);
-            nFieldVar = implClass.field(JMod.PRIVATE | JMod.FINAL | JMod.TRANSIENT, narrowedPropertyType, nPublicFieldName, JExpr._new(narrowedSimplePropertyType));
+            nFieldVar = implClass.field(JMod.PRIVATE | JMod.TRANSIENT, narrowedPropertyType, nPublicFieldName );
         } else {
-            nFieldVar = implClass.field(JMod.PRIVATE | JMod.FINAL | JMod.TRANSIENT, codeModel.ref(propertyType.fullName()), nPublicFieldName, JExpr._new(simplePropertyType));
+            nFieldVar = implClass.field(JMod.PRIVATE | JMod.TRANSIENT, codeModel.ref(propertyType.fullName()), nPublicFieldName );
         }
+
+        //add the property getter
+        String propertyGetterName = oPrivateFieldName + PROPERTY_POSTFIX;
+        JMethod propertyGetter;
+        if (applyGenerics) {
+            JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(plainType);
+            propertyGetter = implClass.method(JMod.PUBLIC, narrowedPropertyType, propertyGetterName);
+        } else {
+            propertyGetter = implClass.method(JMod.PUBLIC, propertyType, propertyGetterName);
+        }
+        propertyGetter.javadoc().append(GENERATED_BY_DOC_COMMENT);
+        {
+            JConditional ifBlock = propertyGetter.body()._if(JExpr._this().ref(nFieldVar).eq(JExpr._null()));
+            if (applyGenerics) {
+                JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(plainType);
+                JClass narrowedSimplePropertyType = codeModel.ref(simplePropertyType.fullName()).narrow(plainType);
+                ifBlock._then().assign( JExpr._this().ref(nFieldVar), JExpr._new(narrowedSimplePropertyType) );
+            } else {
+                ifBlock._then().assign( JExpr._this().ref(nFieldVar), JExpr._new(simplePropertyType) );
+            }
+            //JMethod setMethod = propertyType.
+            ifBlock._then().invoke( JExpr._this().ref(nFieldVar), "set").arg( JExpr._this().ref( oPrivateFieldName ) );
+        }
+        propertyGetter.body()._return(JExpr._this().ref(nFieldVar));
 
         //remove old getter and add a new one, interacting though the property proxy
         String getterName = getterPrefix + oPublicFieldName;
@@ -170,7 +194,7 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
         implClass.methods().remove(oGetter);
         JMethod nGetter = implClass.method(JMod.PUBLIC, plainType, getterName);
         JFieldVar oFieldVar = implClass.fields().get(oPrivateFieldName);
-        JInvocation getOnProxyInvocation = JExpr._this().ref(nFieldVar).invoke("get");
+        JInvocation getOnProxyInvocation = JExpr.invoke(propertyGetter).invoke("get");
         if (patchNullDefaults) {
             JConditional ifBlock = nGetter.body()._if(JExpr._this().ref(oFieldVar).eq(JExpr._null()));
             ifBlock._then()._return(JExpr._this().ref(oFieldVar));
@@ -185,19 +209,8 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
         JMethod setter = implClass.getMethod(setterName, new JType[]{
                 plainType
         });
-        setter.body().directStatement("this." + nPublicFieldName + ".set(value);");
+        setter.body().directStatement( propertyGetterName + "().set(value);");
 
-        //add the property getter
-        String propertyGetterName = oPrivateFieldName + PROPERTY_POSTFIX;
-        JMethod propertyGetter;
-        if (applyGenerics) {
-            JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(plainType);
-            propertyGetter = implClass.method(JMod.PUBLIC, narrowedPropertyType, propertyGetterName);
-        } else {
-            propertyGetter = implClass.method(JMod.PUBLIC, propertyType, propertyGetterName);
-        }
-        propertyGetter.javadoc().append(GENERATED_BY_DOC_COMMENT);
-        propertyGetter.body()._return(JExpr._this().ref(nFieldVar));
     }
 
     private void createFXEnabledListPropertyAccess(JType plainType, JType propertyType, JType simplePropertyType, CPropertyInfo propertyInfo, JDefinedClass implClass, JCodeModel codeModel) throws ClassNotFoundException {
@@ -208,26 +221,72 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
         JClass elementType = ((JClass) collectionField.type()).getTypeParameters().get(0);
         JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(elementType);
 
+        //add new Field for property proxy
+        String nPublicFieldName = oPrivateFieldName + "Proxy";
+        JFieldVar nFieldVar;
+        JClass narrowedSimplePropertyType = codeModel.ref(simplePropertyType.fullName()).narrow(elementType);
+        nFieldVar = implClass.field(JMod.PRIVATE | JMod.TRANSIENT, narrowedPropertyType, nPublicFieldName );
+
+        //add the property getter
+        String propertyGetterName = oPrivateFieldName + PROPERTY_POSTFIX;
+        JMethod propertyGetter;
+        propertyGetter = implClass.method(JMod.PUBLIC, narrowedPropertyType, propertyGetterName);
+
+        propertyGetter.javadoc().append(GENERATED_BY_DOC_COMMENT);
+        JConditional ifListBlock = propertyGetter.body()._if(JExpr._this().ref(collectionField).eq(JExpr._null()));
+        JClass narrowedListType = codeModel.ref(JAVA_UTIL_ARRAYLIST).narrow(elementType);
+        ifListBlock._then().assign( JExpr._this().ref(collectionField), JExpr._new(narrowedListType) );
+
+        JConditional ifProxyBlock = propertyGetter.body()._if(JExpr._this().ref(nFieldVar).eq(JExpr._null()));
+        JClass jxCollectionsType = (JClass) codeModel.parseType(JAVAFX_FXCOLLECTIONS);
+        ifProxyBlock._then().assign( JExpr._this().ref(nFieldVar), JExpr._new(narrowedSimplePropertyType)
+                .arg(jxCollectionsType.staticInvoke("observableArrayList")
+                        .arg(collectionField)));
+
+        propertyGetter.body()._return(JExpr._this().ref(nFieldVar));
+
         //remove old getter and add a new one, interacting though the property proxy
         String getterName = GETTER_PREFIX + oPublicFieldName;
         JMethod oGetter = implClass.getMethod(getterName, new JType[0]);
         JDocComment javadoc = oGetter.javadoc();
         implClass.methods().remove(oGetter);
         JMethod nGetter = implClass.method(JMod.PUBLIC, codeModel.ref(plainType.fullName()).narrow(elementType), getterName);
-        JClass narrowedWrapperType = ((JClass) simplePropertyType).narrow(elementType);
-        JBlock ifBlock = nGetter.body()._if(collectionField.eq(JExpr._null()))._then();
-        JClass arrayListType = (JClass) codeModel.parseType(JAVA_UTIL_ARRAYLIST);
-        JVar backingList = ifBlock.decl(plainType, "backingList", JExpr._new(arrayListType.narrow(elementType)));
-        JClass jxCollectionsType = (JClass) codeModel.parseType(JAVAFX_FXCOLLECTIONS);
-        ifBlock.assign(collectionField, JExpr._new(narrowedWrapperType).arg(jxCollectionsType.staticInvoke("observableArrayList").arg(backingList)));
-        JVar wrapperVar = nGetter.body().decl(narrowedWrapperType, oPrivateFieldName + "Wrapper", JExpr.cast(narrowedWrapperType, JExpr._this().ref(collectionField)));
-        nGetter.body()._return(wrapperVar.invoke("get"));
+        JFieldVar oFieldVar = implClass.fields().get(oPrivateFieldName);
+        JInvocation getOnProxyInvocation = JExpr._this().ref(nFieldVar).invoke("get");
+        nGetter.body().directStatement( "return " + propertyGetterName + "().get();");
         nGetter.javadoc().append(javadoc);
 
-        //add the property getter
-        String propertyGetterName = oPrivateFieldName + PROPERTY_POSTFIX;
-        JMethod propertyGetter = implClass.method(JMod.PUBLIC, narrowedPropertyType, propertyGetterName);
-        propertyGetter.javadoc().append(GENERATED_BY_DOC_COMMENT);
-        propertyGetter.body()._return(JExpr.cast(narrowedPropertyType, JExpr._this().ref(collectionField)));
+
+
+
+//
+//        String oPublicFieldName = propertyInfo.getName(true);
+//        String oPrivateFieldName = propertyInfo.getName(false);
+//
+//        JFieldVar collectionField = implClass.fields().get(oPrivateFieldName);
+//        JClass elementType = ((JClass) collectionField.type()).getTypeParameters().get(0);
+//        JClass narrowedPropertyType = codeModel.ref(propertyType.fullName()).narrow(elementType);
+//
+//        //remove old getter and add a new one, interacting though the property proxy
+//        String getterName = GETTER_PREFIX + oPublicFieldName;
+//        JMethod oGetter = implClass.getMethod(getterName, new JType[0]);
+//        JDocComment javadoc = oGetter.javadoc();
+//        implClass.methods().remove(oGetter);
+//        JMethod nGetter = implClass.method(JMod.PUBLIC, codeModel.ref(plainType.fullName()).narrow(elementType), getterName);
+//        JClass narrowedWrapperType = ((JClass) simplePropertyType).narrow(elementType);
+//        JBlock ifBlock = nGetter.body()._if(collectionField.eq(JExpr._null()))._then();
+//        JClass arrayListType = (JClass) codeModel.parseType(JAVA_UTIL_ARRAYLIST);
+//        JVar backingList = ifBlock.decl(plainType, "backingList", JExpr._new(arrayListType.narrow(elementType)));
+//        JClass jxCollectionsType = (JClass) codeModel.parseType(JAVAFX_FXCOLLECTIONS);
+//        ifBlock.assign(collectionField, JExpr._new(narrowedWrapperType).arg(jxCollectionsType.staticInvoke("observableArrayList").arg(backingList)));
+//        JVar wrapperVar = nGetter.body().decl(narrowedWrapperType, oPrivateFieldName + "Wrapper", JExpr.cast(narrowedWrapperType, JExpr._this().ref(collectionField)));
+//        nGetter.body()._return(wrapperVar.invoke("get"));
+//        nGetter.javadoc().append(javadoc);
+//
+//        //add the property getter
+//        String propertyGetterName = oPrivateFieldName + PROPERTY_POSTFIX;
+//        JMethod propertyGetter = implClass.method(JMod.PUBLIC, narrowedPropertyType, propertyGetterName);
+//        propertyGetter.javadoc().append(GENERATED_BY_DOC_COMMENT);
+//        propertyGetter.body()._return(JExpr.cast(narrowedPropertyType, JExpr._this().ref(collectionField)));
     }
 }
