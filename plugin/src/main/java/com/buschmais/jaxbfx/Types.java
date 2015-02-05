@@ -17,12 +17,12 @@
 package com.buschmais.jaxbfx;
 
 /**
- * All the type specific contant values.
+ * All the type specific constant values.
  *
  * @author Tobias Israel
  * @since 1.0.0
  */
-public abstract class Types {
+abstract class Types {
 
     public static final String JAVA_LANG_STRING = "java.lang.String";
     public static final String JAVAFX_STRING_PROPERTY = "javafx.beans.property.StringProperty";
@@ -33,22 +33,18 @@ public abstract class Types {
     public static final String JAVAFX_BOOLEAN_PROPERTY = "javafx.beans.property.BooleanProperty";
     public static final String JAVAFX_SIMPLE_BOOLEAN_PROPERTY = "javafx.beans.property.SimpleBooleanProperty";
 
-    public static final String JAVA_LANG_DOUBLE = "java.lang.Double";
     public static final String JAVA_PRIMITIVE_DOUBLE = "double";
     public static final String JAVAFX_DOUBLE_PROPERTY = "javafx.beans.property.DoubleProperty";
     public static final String JAVAFX_SIMPLE_DOUBLE_PROPERTY = "javafx.beans.property.SimpleDoubleProperty";
 
-    public static final String JAVA_LANG_FLOAT = "java.lang.Float";
     public static final String JAVA_PRIMITIVE_FLOAT = "float";
     public static final String JAVAFX_FLOAT_PROPERTY = "javafx.beans.property.FloatProperty";
     public static final String JAVAFX_SIMPLE_FLOAT_PROPERTY = "javafx.beans.property.SimpleFloatProperty";
 
-    public static final String JAVA_LANG_INTEGER = "java.lang.Integer";
     public static final String JAVA_PRIMITIVE_INTEGER = "int";
     public static final String JAVAFX_INTEGER_PROPERTY = "javafx.beans.property.IntegerProperty";
     public static final String JAVAFX_SIMPLE_INTEGER_PROPERTY = "javafx.beans.property.SimpleIntegerProperty";
 
-    public static final String JAVA_LANG_LONG = "java.lang.Long";
     public static final String JAVA_PRIMITIVE_LONG = "long";
     public static final String JAVAFX_LONG_PROPERTY = "javafx.beans.property.LongProperty";
     public static final String JAVAFX_SIMPLE_LONG_PROPERTY = "javafx.beans.property.SimpleLongProperty";

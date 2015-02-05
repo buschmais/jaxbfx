@@ -17,15 +17,27 @@
 
 package com.buschmais.jaxbfx;
 
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-import org.junit.Test;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 
 import com.buschmais.test.fx.ListType;
 import com.buschmais.test.fx.ObjectFactory;
 import com.buschmais.test.fx.TestType;
-
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
+import org.junit.Test;
 
 /**
  * Tests to make sure, the plugin serves your expectations ;-)
@@ -41,13 +53,13 @@ public class FXBeanPropertyXJCPluginTest {
         ObjectFactory of = new ObjectFactory();
         TestType cut = of.createTestType();
         assertTrue("StringProperty expected!", cut.aStringProperty() instanceof StringProperty);
-        assertTrue("BooleanProperty expected!", cut.aBooleanProperty() instanceof BooleanProperty);
-        assertTrue("DoubleProperty expected!", cut.aDoubleProperty() instanceof DoubleProperty);
-        assertTrue("FloatProperty expected!", cut.aFloatProperty() instanceof FloatProperty);
-        assertTrue("LongProperty expected!", cut.aLongProperty() instanceof LongProperty);
+        assertTrue("ObjectProperty expected!", cut.aBooleanProperty() instanceof ObjectProperty);
+        assertTrue("ObjectProperty expected!", cut.aDoubleProperty() instanceof ObjectProperty);
+        assertTrue("ObjectProperty expected!", cut.aFloatProperty() instanceof ObjectProperty);
+        assertTrue("ObjectProperty expected!", cut.aLongProperty() instanceof ObjectProperty);
         cut.getAList();
         assertTrue("ListProperty expected!", cut.aListProperty() instanceof ListProperty);
-        assertTrue("IntegerProperty expected!", cut.anIntegerProperty() instanceof IntegerProperty);
+        assertTrue("ObjectProperty expected!", cut.anIntegerProperty() instanceof ObjectProperty);
 
         assertTrue("BooleanProperty expected!", cut.aPrimitiveBooleanProperty() instanceof BooleanProperty);
         assertTrue("DoubleProperty expected!", cut.aPrimitiveDoubleProperty() instanceof DoubleProperty);
@@ -73,11 +85,11 @@ public class FXBeanPropertyXJCPluginTest {
         assertTrue(cut.isABoolean());
         cut.setADouble(22.5);
         assertEquals(22.5, cut.getADouble(), 0);
-        cut.setAnInteger(Integer.valueOf(2));
+        cut.setAnInteger(2);
         assertEquals(Integer.valueOf(2), cut.getAnInteger());
-        cut.setALong(Long.valueOf(2));
+        cut.setALong(2l);
         assertEquals(Long.valueOf(2), cut.getALong());
-        cut.setAFloat(Float.valueOf(0.25f));
+        cut.setAFloat(0.25f);
         assertEquals(Float.valueOf(0.25f), cut.getAFloat());
 
         cut.setAPrimitiveBoolean(true);
@@ -90,6 +102,41 @@ public class FXBeanPropertyXJCPluginTest {
         assertEquals(2, cut.getAPrimitiveLong());
         cut.setAPrimitiveFloat(0.25f);
         assertEquals(0.25f, cut.getAPrimitiveFloat(), 0);
+    }
+
+    @Test
+    public void testUnmarshalling() throws Exception {
+        JAXBContext jaxbContext = JAXBContext.newInstance("com.buschmais.test.fx");
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<TestType> jaxbElem = (JAXBElement<TestType>) unmarshaller.unmarshal(
+                FXBeanPropertyXJCPluginTest.class.getResourceAsStream("/testdata.xml"));
+        TestType unmarshalledBean = jaxbElem.getValue();
+        assertEquals("string", unmarshalledBean.getAString());
+        assertEquals("string", unmarshalledBean.aStringProperty().get());
+        assertTrue(unmarshalledBean.isABoolean());
+        assertTrue(unmarshalledBean.aBooleanProperty().get());
+        assertTrue(unmarshalledBean.isAPrimitiveBoolean());
+        assertTrue(unmarshalledBean.aPrimitiveBooleanProperty().get());
+        assertEquals(1.051732e7, unmarshalledBean.getAPrimitiveDouble(), 0);
+        assertEquals(1.051732e7, unmarshalledBean.aPrimitiveDoubleProperty().get(), 0);
+        assertEquals(new Double(1.051732e7), unmarshalledBean.getADouble());
+        assertEquals(new Double(1.051732e7), unmarshalledBean.aDoubleProperty().get());
+        assertEquals(1.5e2, unmarshalledBean.getAPrimitiveFloat(), 0);
+        assertEquals(1.5e2, unmarshalledBean.aPrimitiveFloatProperty().get(), 0);
+        assertEquals(1.5e2, unmarshalledBean.getAFloat(), 0);
+        assertEquals(1.5e2, unmarshalledBean.aFloatProperty().get(), 0);
+        assertEquals(3, unmarshalledBean.getAPrimitiveInteger());
+        assertEquals(3, unmarshalledBean.aPrimitiveIntegerProperty().get());
+        assertEquals(new Integer(3), unmarshalledBean.getAnInteger());
+        assertEquals(new Integer(3), unmarshalledBean.anIntegerProperty().get());
+        assertEquals(new Long(10), unmarshalledBean.getALong());
+        assertEquals(new Long(10), unmarshalledBean.aLongProperty().get());
+        assertEquals(10, unmarshalledBean.getAPrimitiveLong());
+        assertEquals(10, unmarshalledBean.aPrimitiveLongProperty().get());
+        assertThat(unmarshalledBean.getAList(), hasSize(1));
+        assertThat(unmarshalledBean.aListProperty().get(), hasSize(1));
+        assertEquals("string", unmarshalledBean.getAList().get(0).getListItem());
+        assertEquals("string", unmarshalledBean.aListProperty().get().get(0).getListItem());
     }
 
 }
