@@ -68,6 +68,16 @@ dependency:
      </dependencies>
      ...
 
+## Diving In
+
+* Learn how the [JavaFX databinding](http://docs.oracle.com/javase/8/javafx/properties-binding-tutorial/binding.htm) works.
+* Learn more about [Java Web Services Tools](https://docs.oracle.com/javase/8/docs/technotes/tools/#webservices).
+* Read the JAXB2 Maven Plugin [documentation](https://github.com/highsource/maven-jaxb2-plugin/wiki).
+
+## Bugs?
+
+Check out [current issues](https://github.com/buschmais/jaxbfx/issues), report a [new one](https://github.com/buschmais/jaxbfx/issues/new), or (even better) help us making it better by forking, fixing and providing Pull Requests.
+
 ##License
 
 jaxbfx is released under the [Apache License, Version 2.0] (http://www.apache.org/licenses/LICENSE-2.0.html)
