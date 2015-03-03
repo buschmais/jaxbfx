@@ -24,7 +24,9 @@ import static org.junit.Assert.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import com.buschmais.test.fx.ListType;
 import com.buschmais.test.fx.ObjectFactory;
@@ -38,6 +40,9 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Tests to make sure, the plugin serves your expectations ;-)
@@ -111,6 +116,72 @@ public class FXBeanPropertyXJCPluginTest {
         JAXBElement<TestType> jaxbElem = (JAXBElement<TestType>) unmarshaller.unmarshal(
                 FXBeanPropertyXJCPluginTest.class.getResourceAsStream("/testdata.xml"));
         TestType unmarshalledBean = jaxbElem.getValue();
+        validateXmlbean(unmarshalledBean);
+    }
+
+    @Test
+    public void testMarshallingFromSetters() throws Exception {
+        TestType testType = new ObjectFactory().createTestType();
+
+        testType.setAString( "string" );
+        testType.setABoolean(true);
+        testType.setAPrimitiveBoolean(true);
+        testType.setAPrimitiveDouble(1.051732e7);
+        testType.setADouble(1.051732e7);
+        testType.setAPrimitiveFloat((float) 1.5e2);
+        testType.setAFloat((float) 1.5e2);
+        testType.setAPrimitiveInteger( 3 );
+        testType.setAnInteger( 3 );
+        testType.setALong( (long)10 );
+        testType.setAPrimitiveLong( 10 );
+
+        ListType listType =  new ObjectFactory().createListType();
+        listType.setListItem( "string" );
+        testType.getAList().add( listType );
+
+        validateMarshaller ( testType );
+    }
+
+    @Test
+    public void testMarshallingFromProps() throws Exception {
+        TestType testType = new ObjectFactory().createTestType();
+
+        testType.aStringProperty().setValue( "string" );
+        testType.aBooleanProperty().setValue(true);
+        testType.aPrimitiveBooleanProperty().setValue(true);
+        testType.aPrimitiveDoubleProperty().setValue(1.051732e7);
+        testType.aDoubleProperty().setValue(1.051732e7);
+        testType.aPrimitiveFloatProperty().setValue((float) 1.5e2);
+        testType.aFloatProperty().setValue((float) 1.5e2);
+        testType.aPrimitiveIntegerProperty().setValue( 3 );
+        testType.anIntegerProperty().setValue( 3 );
+        testType.aLongProperty().setValue( (long)10 );
+        testType.aPrimitiveLongProperty().setValue( 10 );
+
+        ListType listType =  new ObjectFactory().createListType();
+        listType.listItemProperty().setValue( "string" );
+        testType.aListProperty().add( listType );
+
+        validateMarshaller ( testType );
+    }
+
+    private void validateMarshaller(TestType testType) throws Exception {
+        JAXBContext jaxbContext = JAXBContext.newInstance("com.buschmais.test.fx");
+
+        JAXBElement<TestType> jaxbElem = new JAXBElement<TestType>( new QName( "http://fx.test.buschmais.com", "test" ), TestType.class, testType );
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        marshaller.marshal( jaxbElem, bos );
+        bos.close();
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        ByteArrayInputStream bis = new ByteArrayInputStream( bos.toByteArray() );
+        jaxbElem = (JAXBElement<TestType>) unmarshaller.unmarshal( bis );
+        TestType unmarshalledBean = jaxbElem.getValue();
+        validateXmlbean(unmarshalledBean);
+    }
+
+    private void validateXmlbean(TestType unmarshalledBean) {
         assertEquals("string", unmarshalledBean.getAString());
         assertEquals("string", unmarshalledBean.aStringProperty().get());
         assertTrue(unmarshalledBean.isABoolean());
