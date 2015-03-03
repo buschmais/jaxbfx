@@ -1,0 +1,16 @@
+<fx:test xmlns:fx="http://fx.test.buschmais.com">
+    <fx:aString>string</fx:aString>
+    <fx:aBoolean>true</fx:aBoolean>
+    <fx:aPrimitiveBoolean>true</fx:aPrimitiveBoolean>
+    <fx:aDouble>1.051732E7</fx:aDouble>
+    <fx:aPrimitiveDouble>1.051732E7</fx:aPrimitiveDouble>
+    <fx:aFloat>1.5E2</fx:aFloat>
+    <fx:aPrimitiveFloat>1.5E2</fx:aPrimitiveFloat>
+    <fx:anInteger>3</fx:anInteger>
+    <fx:aPrimitiveInteger>3</fx:aPrimitiveInteger>
+    <fx:aLong>10</fx:aLong>
+    <fx:aPrimitiveLong>10</fx:aPrimitiveLong>
+    <fx:aList>
+        <fx:listItem>string</fx:listItem>
+    </fx:aList>
+</fx:test>

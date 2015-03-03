@@ -43,7 +43,7 @@ Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
                         <plugin>
                             <groupId>com.buschmais.jaxbfx</groupId>
                             <artifactId>jaxbfx-plugin</artifactId>
-                            <version>1.0.0</version>
+                            <version>1.0.1</version>
                         </plugin>
                     </plugins>
                 </configuration>
@@ -67,6 +67,16 @@ dependency:
          </dependency>
      </dependencies>
      ...
+
+## Diving In
+
+* Learn how the [JavaFX databinding](http://docs.oracle.com/javase/8/javafx/properties-binding-tutorial/binding.htm) works.
+* Learn more about [Java Web Services Tools](https://docs.oracle.com/javase/8/docs/technotes/tools/#webservices).
+* Read the JAXB2 Maven Plugin [documentation](https://github.com/highsource/maven-jaxb2-plugin/wiki).
+
+## Bugs?
+
+Check out [current issues](https://github.com/buschmais/jaxbfx/issues), report a [new one](https://github.com/buschmais/jaxbfx/issues/new), or (even better) help us making it better by forking, fixing and providing Pull Requests.
 
 ##License
 
