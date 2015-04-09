@@ -192,8 +192,11 @@ public class FXBeanPropertyXJCPlugin extends Plugin {
             if ( javaVersion >= 8 ) {
                 changeListener = "(observable, oldValue, newValue) -> {this." + oPrivateFieldName + " = (" + typeName + ")newValue; }";
             } else {
-                changeListener = "new javafx.beans.value.ChangeListener<" + typeName + ">() {" +
-                        "public void changed(javafx.beans.value.ObservableValue<? extends " + typeName + "> observable, " + typeName + " oldValue, " + typeName + " newValue) {" +
+                String baseTypeName = typeName;
+                if ( NUMBER_TYPES.contains(typeName) )
+                    baseTypeName = JAVA_LANG_NUMBER;
+                changeListener = "new javafx.beans.value.ChangeListener<" + baseTypeName + ">() {" +
+                        "public void changed(javafx.beans.value.ObservableValue<? extends " + baseTypeName + "> observable, " + baseTypeName + " oldValue, " + baseTypeName + " newValue) {" +
                         oPrivateFieldName + " = (" + typeName + ")newValue;" +
                         "}}";
             }

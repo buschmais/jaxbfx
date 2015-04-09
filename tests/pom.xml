@@ -50,6 +50,8 @@
                     <removeOldOutput>true</removeOldOutput>
                     <args>
                         <arg>-Xgenerate-fx-properties</arg>
+                        <arg>-Xjaxbfx-java-version</arg>
+                        <arg>8</arg>
                     </args>
                     <plugins>
                         <plugin>
