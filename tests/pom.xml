@@ -51,7 +51,7 @@
                     <args>
                         <arg>-Xgenerate-fx-properties</arg>
                         <arg>-Xjaxbfx-java-version</arg>
-                        <arg>8</arg>
+                        <arg>${plugin-java-version}</arg>
                     </args>
                     <plugins>
                         <plugin>

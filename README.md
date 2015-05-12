@@ -53,14 +53,7 @@ Configure the JAXB-2 Maven Plugin and add jaxbfx plugin configuration:
 	  ...
 	</project>
 
-If you're running the plugin with Java 7, you have to make two changes:
-
-* Force the plugin to generate anonymous classes instead of lambdas with additional arguments:
-
-                        <arg>-Xjaxbfx-java-version</arg>
-                        <arg>7</arg>
-
-* You might have to prevent compilation issues by adding the following dependency:
+If you're running the plugin with Java 7 you might have to prevent compilation issues by adding the following dependency:
 
     ...
      <dependencies>
@@ -73,6 +66,12 @@ If you're running the plugin with Java 7, you have to make two changes:
          </dependency>
      </dependencies>
      ...
+
+To force the plugin to generate Java 8+ introduced lambda expressions (instead of anonymous classes) you have to extend
+the plugins configuration:
+
+                        <arg>-Xjaxbfx-java-version</arg>
+                        <arg>8</arg>
 
 ## Diving In
 
