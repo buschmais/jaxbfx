@@ -16,6 +16,9 @@
  */
 package com.buschmais.jaxbfx;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * All the type specific constant values.
  *
@@ -57,4 +60,13 @@ abstract class Types {
 
     public static final String JAVAFX_OBJECT_PROPERTY = "javafx.beans.property.ObjectProperty";
     public static final String JAVAFX_SIMPLE_OBJECT_PROPERTY = "javafx.beans.property.SimpleObjectProperty";
+
+    public static final String JAVA_LANG_NUMBER = "java.lang.Number";
+    public static final Set<String> NUMBER_TYPES = new HashSet<>();
+    static {
+        NUMBER_TYPES.add( "Integer" );
+        NUMBER_TYPES.add( "Long" );
+        NUMBER_TYPES.add( "Float" );
+        NUMBER_TYPES.add( "Double" );
+    }
 }
