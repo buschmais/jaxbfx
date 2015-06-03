@@ -21,7 +21,7 @@
     <parent>
         <artifactId>jaxbfx</artifactId>
         <groupId>com.buschmais.jaxbfx</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>jaxbfx-tests</artifactId>
